@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Score | سكور - باني السيرة الذاتية الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Cairo', 'IBM Plex Sans Arabic', 'sans-serif'],
+              english: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              dark: '#0A0A0A',
+              card: '#121212',
+              primary: '#7C3AED', // Main Purple
+              'primary-light': '#9F6CFF', // Light Purple
+              'primary-dark': '#5B21B6',
+              secondary: '#E5E7EB', // Light Grey text
+              muted: '#9CA3AF', // Muted text
+              'glass': 'rgba(255, 255, 255, 0.05)',
+            },
+            animation: {
+              'fade-up': 'fadeUp 0.8s ease-out forwards',
+              'fade-in': 'fadeIn 0.6s ease-out forwards',
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'progress': 'progress 4s linear forwards',
+            },
+            keyframes: {
+              fadeUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              progress: {
+                '0%': { width: '0%' },
+                '100%': { width: '100%' }
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Cairo', sans-serif;
+        background-color: #0A0A0A;
+        color: #E5E7EB;
+        overflow-x: hidden;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0A0A0A; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #7C3AED; 
+      }
+      
+      .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      /* Print Styling to hide UI */
+      @media print {
+        @page { margin: 0; }
+        body { 
+            background: white; 
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact;
+        }
+        .no-print { display: none !important; }
+        .print-only { display: block !important; }
+        .cv-container { box-shadow: none !important; margin: 0 !important; width: 100% !important; height: auto !important; transform: none !important; }
+      }
+
+      .text-gradient {
+        background: linear-gradient(to right, #7C3AED, #9F6CFF, #60A5FA);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Smooth transitions for all interactive elements */
+      button, a, input, select, textarea {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "react": "https://esm.sh/react@^19.2.1",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.10.1"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
