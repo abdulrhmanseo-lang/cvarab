@@ -15,6 +15,13 @@ export interface Education {
   year: string;
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  link?: string;
+}
+
 export enum TemplateId {
   // Arabic Templates
   AR_ATS = 'ar_ats', // 1. ATS Standard
@@ -56,9 +63,12 @@ export interface CVData {
   skills: string[];
   experience: Experience[];
   education: Education[];
-  targetCompany: string; // e.g., 'Aramco', 'SABIC', etc.
+  projects: Project[];
+  certifications: string[];
+  targetCompany: string; 
   templateId: TemplateId;
   language: Language;
+  freeText?: string;
 }
 
 export interface ATSAnalysis {
@@ -76,4 +86,25 @@ export enum TargetCompany {
   STC = "stc",
   Neom = "نيوم",
   Saudia = "الخطوط السعودية"
+}
+
+export type Plan = 'free' | 'basic' | 'pro' | 'guaranteed';
+
+export interface BillingTransaction {
+  id: string;
+  date: string;
+  amount: number;
+  plan: Plan;
+  status: 'paid' | 'failed' | 'pending';
+  invoiceUrl?: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  plan: Plan;
+  subscriptionActive: boolean;
+  subscriptionEnds?: string;
+  billingHistory: BillingTransaction[];
 }

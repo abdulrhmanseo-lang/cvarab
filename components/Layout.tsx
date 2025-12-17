@@ -1,6 +1,8 @@
+
 import React, { ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FileText, Star, Menu, X, Instagram, Twitter, Linkedin, MessageCircle, Briefcase } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,6 +11,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const navLinks = [
     { name: 'الرئيسية', path: '/' },
@@ -23,19 +26,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col font-sans bg-dark text-secondary selection:bg-primary selection:text-white">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-dark/80 backdrop-blur-md border-b border-white/5">
-        <div className="container mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+        <div className="container mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-2 md:gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-primary blur-lg opacity-40 group-hover:opacity-70 transition-opacity"></div>
-              <div className="relative bg-gradient-to-br from-primary to-primary-dark text-white p-2.5 rounded-xl transform group-hover:rotate-6 transition-transform shadow-lg shadow-primary/20">
-                <Star size={24} fill="currentColor" className="text-white" />
+              <div className="relative bg-gradient-to-br from-primary to-primary-dark text-white p-2 md:p-2.5 rounded-xl transform group-hover:rotate-6 transition-transform shadow-lg shadow-primary/20">
+                <Star size={20} className="md:w-6 md:h-6 text-white" fill="currentColor" />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-black text-white tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">سكور</span>
-              <span className="text-[10px] text-primary-light font-bold uppercase tracking-[0.2em] -mt-1">Score CV</span>
+              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">سكور</span>
+              <span className="text-[9px] md:text-[10px] text-primary-light font-bold uppercase tracking-[0.2em] -mt-1 hidden md:block">Score CV</span>
             </div>
           </Link>
 
@@ -59,14 +62,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           {/* CTA & Auth */}
           <div className="hidden md:flex items-center gap-4">
-            <Link to="/dashboard/jobs-tracking" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-              لوحة التحكم
-            </Link>
-            <Link to="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-              تسجيل الدخول
-            </Link>
+             {user ? (
+                 <>
+                  <Link to="/dashboard" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    لوحة التحكم
+                  </Link>
+                  <button onClick={logout} className="text-sm font-medium text-gray-400 hover:text-red-400 transition-colors">
+                    خروج
+                  </button>
+                 </>
+             ) : (
+                <Link to="/login" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    تسجيل الدخول
+                </Link>
+             )}
+            
             <Link to="/builder">
-               <button className="bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-light hover:to-primary text-white px-6 py-2.5 rounded-full font-bold shadow-[0_0_20px_rgba(124,58,237,0.4)] hover:shadow-[0_0_30px_rgba(124,58,237,0.6)] transition-all active:scale-95 flex items-center gap-2 border border-white/10">
+               <button className="bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-light hover:to-primary text-white px-6 py-2.5 rounded-full font-bold shadow-[0_0_20px_rgba(124,58,237,0.4)] hover:shadow-[0_0_30px_rgba(124,58,237,0.6)] transition-all active:scale-95 flex items-center gap-2 border border-white/10 text-sm md:text-base">
                  <span>ابدأ الآن</span>
                  <FileText size={18} />
                </button>
@@ -84,31 +96,42 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-card border-b border-white/5 p-4 flex flex-col gap-4 animate-fade-in absolute w-full z-50 shadow-2xl">
+          <div className="md:hidden bg-[#121212] border-b border-white/5 p-4 flex flex-col gap-2 animate-fade-in absolute w-full z-50 shadow-2xl h-[calc(100vh-64px)] overflow-y-auto">
              {navLinks.map((link) => (
               <Link 
                 key={link.name} 
                 to={link.path}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-gray-300 font-medium py-3 px-4 hover:bg-white/5 rounded-xl transition-colors flex justify-between items-center"
+                className="text-gray-300 font-bold py-4 px-4 hover:bg-white/5 rounded-xl transition-colors flex justify-between items-center text-lg border-b border-white/5 last:border-0"
               >
                 {link.name}
                 {link.isNew && <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full">جديد</span>}
               </Link>
             ))}
-            <hr className="border-white/5 my-2" />
-            <Link 
-              to="/login" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-center text-gray-300 py-2 hover:text-white"
-            >
-              تسجيل الدخول
-            </Link>
-            <Link to="/builder" onClick={() => setIsMobileMenuOpen(false)}>
-              <button className="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-lg shadow-primary/30">
-                أنشئ سيرتك الآن
-              </button>
-            </Link>
+            
+            <div className="mt-4 flex flex-col gap-3">
+                {user ? (
+                   <>
+                     <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="w-full text-center bg-white/5 text-white py-4 rounded-xl font-bold border border-white/10">
+                        لوحة التحكم
+                     </Link>
+                     <button onClick={() => {logout(); setIsMobileMenuOpen(false)}} className="w-full text-center text-red-400 py-2">تسجيل الخروج</button>
+                   </>
+                ) : (
+                    <Link 
+                    to="/login" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full text-center bg-white/5 text-white py-4 rounded-xl font-bold border border-white/10 hover:bg-white/10"
+                    >
+                    تسجيل الدخول
+                    </Link>
+                )}
+                <Link to="/builder" onClick={() => setIsMobileMenuOpen(false)}>
+                <button className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 text-lg flex items-center justify-center gap-2">
+                    أنشئ سيرتك الآن <FileText size={20} />
+                </button>
+                </Link>
+            </div>
           </div>
         )}
       </header>
@@ -119,17 +142,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-white/5 py-16 relative overflow-hidden">
+      <footer className="bg-black border-t border-white/5 py-12 md:py-16 relative overflow-hidden">
         {/* Glow Element */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[500px] h-[300px] bg-primary/20 blur-[100px] rounded-full pointer-events-none"></div>
 
-        <div className="container mx-auto px-4 md:px-8 grid md:grid-cols-4 gap-12 relative z-10">
+        <div className="container mx-auto px-4 md:px-8 grid md:grid-cols-4 gap-8 md:gap-12 relative z-10">
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-6">
                <Star size={24} className="text-primary fill-primary" />
                <span className="text-2xl font-black text-white">سكور</span>
             </Link>
-            <p className="max-w-md text-gray-500 leading-relaxed mb-8">
+            <p className="max-w-md text-gray-500 leading-relaxed mb-8 text-sm md:text-base">
               المنصة العربية الأولى المتخصصة في إنشاء سير ذاتية متوافقة مع أنظمة ATS للشركات السعودية والخليجية الكبرى، مدعومة بأحدث تقنيات الذكاء الاصطناعي.
             </p>
             <div className="flex gap-4">
@@ -139,14 +162,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-all hover:scale-110">
                 <Linkedin size={18} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-all hover:scale-110">
-                <Instagram size={18} />
-              </a>
             </div>
           </div>
           <div>
             <h4 className="font-bold text-white mb-6 text-lg">المنصة</h4>
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-sm md:text-base">
               <li><Link to="/builder" className="text-gray-500 hover:text-primary transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-primary rounded-full"></span> إنشاء CV</Link></li>
               <li><Link to="/templates" className="text-gray-500 hover:text-primary transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-primary rounded-full"></span> القوالب</Link></li>
               <li><Link to="/pricing" className="text-gray-500 hover:text-primary transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-primary rounded-full"></span> الأسعار</Link></li>
@@ -155,7 +175,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div>
             <h4 className="font-bold text-white mb-6 text-lg">تواصل معنا</h4>
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-sm md:text-base">
               <li>
                 <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-400 hover:text-green-500 transition-colors group">
                   <div className="p-2 bg-white/5 rounded-lg group-hover:bg-green-500/10 transition-colors">
@@ -169,7 +189,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-4 md:px-8 mt-16 pt-8 border-t border-white/5 text-center flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
+        <div className="container mx-auto px-4 md:px-8 mt-12 md:mt-16 pt-8 border-t border-white/5 text-center flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
           <p>© 2025 سكور Score. جميع الحقوق محفوظة.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
              <span>صنع بحب في السعودية 🇸🇦</span>

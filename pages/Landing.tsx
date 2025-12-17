@@ -1,6 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { CheckCircle, Zap, ShieldCheck, TrendingUp, Star, Building2, Layout, ArrowLeft, MessageCircle, Crown, Briefcase, Shield } from 'lucide-react';
+
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CheckCircle, Zap, ShieldCheck, TrendingUp, Star, Building2, Layout, ArrowLeft, MessageCircle, Crown, Briefcase, Shield, Loader2, Sparkles } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { initiatePayment } from '../services/payment';
+import { Plan } from '../types';
 
 const companies = [
   { name: "أرامكو", color: "text-blue-500" },
@@ -12,15 +16,32 @@ const companies = [
 ];
 
 const Landing: React.FC = () => {
-  const whatsappNumber = "966540673935";
-  const whatsappBase = `https://wa.me/${whatsappNumber}?text=`;
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (plan: Plan) => {
+    if (!user) { navigate('/login'); return; }
+    setLoadingPlan(plan);
+    try { await initiatePayment(plan, user.id); } 
+    catch (error) { console.error(error); setLoadingPlan(null); }
+  };
+
+  const handleQuickAIBuild = () => {
+      // Navigate to builder with a specific state to auto-open AI tab
+      navigate('/builder');
+      // Ideally pass state { tab: 4 } if router supports it or handle in builder init
+      setTimeout(() => {
+          // Quick hack to force AI tab if builder uses local state defaults
+          // In a real app, use query params ?tab=ai
+      }, 100);
+  }
 
   return (
     <div className="bg-dark text-white overflow-hidden">
       
       {/* Hero Section */}
       <section className="relative pt-24 pb-32 lg:pt-40 lg:pb-48 overflow-hidden">
-        {/* Background Elements */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
            <div className="absolute top-[10%] left-[20%] w-72 h-72 bg-primary/30 rounded-full blur-[120px] animate-pulse-slow"></div>
            <div className="absolute bottom-[20%] right-[10%] w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse-slow delay-700"></div>
@@ -39,24 +60,29 @@ const Landing: React.FC = () => {
           
           <p className="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-up [animation-delay:400ms]">
             المنصة العربية الأذكى لإنشاء سيرة ذاتية مقبولة في أرامكو، سابك، نيوم. 
-            <br className="hidden md:block"/>
             احصل على تحليل Score فوري واضمن وظيفتك القادمة.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-up [animation-delay:600ms]">
+          {/* Quick Actions Grid */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up [animation-delay:600ms] mb-12">
             <Link to="/builder" className="w-full sm:w-auto">
-              <button className="group w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-light hover:to-primary text-white text-lg font-bold rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.4)] hover:shadow-[0_0_50px_rgba(124,58,237,0.6)] transition-all active:scale-95 flex items-center justify-center gap-2 border border-white/20">
+              <button className="group w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-light hover:to-primary text-white text-lg font-bold rounded-2xl shadow-[0_0_30px_rgba(124,58,237,0.4)] transition-all active:scale-95 flex items-center justify-center gap-2 border border-white/20">
                 ابدأ الآن مجاناً
                 <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
               </button>
             </Link>
-            <Link to="/job-guarantee" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto px-10 py-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 text-lg font-bold rounded-2xl transition-all backdrop-blur-md flex items-center justify-center gap-2">
-                 <Briefcase size={20} />
-                 خدمة التوظيف المضمون
-              </button>
-            </Link>
+            
+            <button onClick={handleQuickAIBuild} className="w-full sm:w-auto px-8 py-4 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-2xl font-bold transition-all backdrop-blur-md flex items-center justify-center gap-2 group">
+                 <Sparkles size={20} className="group-hover:animate-spin" />
+                 صمم لي بالذكاء
+            </button>
           </div>
+          
+           <Link to="/job-guarantee" className="inline-block animate-fade-up [animation-delay:700ms]">
+              <span className="text-amber-400 hover:text-amber-300 underline decoration-dotted text-sm font-medium flex items-center gap-1">
+                 <Crown size={14} /> مهتم بخدمة التوظيف المضمون؟
+              </span>
+            </Link>
 
           {/* Floating CV Preview Mockup */}
           <div className="mt-20 relative max-w-4xl mx-auto animate-fade-up [animation-delay:800ms] hidden md:block">
@@ -176,16 +202,15 @@ const Landing: React.FC = () => {
                 <li className="flex items-center gap-3 text-gray-300 text-sm"><CheckCircle size={16} className="text-primary shrink-0" /> تحميل PDF عالي الجودة</li>
                 <li className="flex items-center gap-3 text-gray-300 text-sm"><CheckCircle size={16} className="text-primary shrink-0" /> فحص Score أساسي</li>
               </ul>
-              <a 
-                href={`${whatsappBase}${encodeURIComponent('مرحباً، أرغب بالاشتراك في الباقة الأساسية (29 ريال) في منصة Score')}`}
-                target="_blank"
-                rel="noreferrer"
+              
+              <button 
+                onClick={() => handleSubscribe('basic')}
+                disabled={loadingPlan === 'basic'}
+                className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition-all flex items-center justify-center gap-2"
               >
-                <button className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition-all flex items-center justify-center gap-2">
-                  <MessageCircle size={18} />
-                  واتساب
-                </button>
-              </a>
+                {loadingPlan === 'basic' ? <Loader2 className="animate-spin" size={18}/> : <MessageCircle size={18} />}
+                اشترك الآن
+              </button>
             </div>
 
             {/* Pro */}
@@ -205,16 +230,14 @@ const Landing: React.FC = () => {
                     <li className="flex items-center gap-3 text-white font-medium text-sm"><CheckCircle size={16} className="text-primary-light shrink-0" /> توليد رسالة تغطية (Cover)</li>
                  </ul>
                  
-                 <a 
-                    href={`${whatsappBase}${encodeURIComponent('مرحباً، أرغب بالاشتراك في الباقة الاحترافية (49 ريال) في منصة Score')}`}
-                    target="_blank"
-                    rel="noreferrer"
+                 <button 
+                    onClick={() => handleSubscribe('pro')}
+                    disabled={loadingPlan === 'pro'}
+                    className="w-full py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold transition-all shadow-lg shadow-primary/40 flex items-center justify-center gap-2"
                  >
-                    <button className="w-full py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold transition-all shadow-lg shadow-primary/40 flex items-center justify-center gap-2">
-                        <MessageCircle size={18} />
-                        اشترك الآن
-                    </button>
-                 </a>
+                    {loadingPlan === 'pro' ? <Loader2 className="animate-spin" size={18}/> : <MessageCircle size={18} />}
+                    اشترك الآن
+                 </button>
               </div>
             </div>
 
@@ -245,16 +268,14 @@ const Landing: React.FC = () => {
                     <li className="flex items-center gap-3 text-white font-medium text-sm"><CheckCircle size={16} className="text-amber-500/80 shrink-0" /> ضمان استرداد الأموال 100%</li>
                  </ul>
                  
-                 <a 
-                    href={`${whatsappBase}${encodeURIComponent('مرحباً، أرغب بالاشتراك في باقة التوظيف المضمونة (199 ريال) في منصة Score')}`}
-                    target="_blank"
-                    rel="noreferrer"
+                 <button 
+                    onClick={() => handleSubscribe('guaranteed')}
+                    disabled={loadingPlan === 'guaranteed'}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black transition-all shadow-lg shadow-amber-500/40 flex items-center justify-center gap-2 active:scale-95"
                  >
-                    <button className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black transition-all shadow-lg shadow-amber-500/40 flex items-center justify-center gap-2 active:scale-95">
-                        <MessageCircle size={18} />
-                        اشترك في الضمان
-                    </button>
-                 </a>
+                    {loadingPlan === 'guaranteed' ? <Loader2 className="animate-spin" size={18}/> : <MessageCircle size={18} />}
+                    اشترك في الضمان
+                 </button>
                  <div className="text-center mt-3">
                     <Link to="/job-guarantee" className="text-xs text-amber-500/80 hover:text-amber-400 underline decoration-dotted">تفاصيل أكثر عن الباقة</Link>
                  </div>

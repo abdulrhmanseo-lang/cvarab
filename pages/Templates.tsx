@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Layout, CheckCircle } from 'lucide-react';
@@ -11,9 +12,9 @@ const Templates: React.FC = () => {
                 <p className="text-gray-400 text-lg">صممت خصيصاً لتتوافق مع أنظمة الـ ATS في الخليج والسعودية</p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-8 max-w-6xl mx-auto space-y-8">
                 {/* Template 1 */}
-                <div className="group relative">
+                <div className="group relative break-inside-avoid">
                     <div className="absolute inset-0 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="relative bg-card border border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all hover:-translate-y-2">
                         <div className="h-64 bg-gray-800 relative group-hover:scale-105 transition-transform duration-700">
@@ -35,7 +36,7 @@ const Templates: React.FC = () => {
                 </div>
 
                  {/* Template 2 */}
-                 <div className="group relative">
+                 <div className="group relative break-inside-avoid">
                     <div className="absolute inset-0 bg-indigo-500/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="relative bg-card border border-white/10 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition-all hover:-translate-y-2">
                         <div className="absolute top-4 left-4 z-10 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full">الأكثر استخداماً</div>
@@ -60,7 +61,7 @@ const Templates: React.FC = () => {
                 </div>
 
                  {/* Template 3 */}
-                 <div className="group relative">
+                 <div className="group relative break-inside-avoid">
                     <div className="absolute inset-0 bg-blue-500/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="relative bg-card border border-white/10 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all hover:-translate-y-2">
                         <div className="h-64 bg-gray-800 relative group-hover:scale-105 transition-transform duration-700">
