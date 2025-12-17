@@ -11,8 +11,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- html2pdf.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2pdf.js REMOVED: Using native print for better Arabic support -->
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,16 +19,15 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Cairo', 'IBM Plex Sans Arabic', 'sans-serif'],
-              english: ['Inter', 'sans-serif'],
-              serif: ['Merriweather', 'Playfair Display', 'serif'],
+              sans: ['Cairo', 'sans-serif'],
+              serif: ['Noto Naskh Arabic', 'serif'], // Better for detailed reading
             },
             colors: {
               dark: '#050505',
@@ -105,7 +103,7 @@
         100% { transform: rotate(360deg); }
       }
 
-      /* Print simulation styles */
+      /* Screen Preview Styles */
       .cv-paper {
         background: white;
         width: 210mm;
@@ -116,6 +114,44 @@
         position: relative;
         transform-origin: top center;
         margin: 0 auto;
+        padding: 0; /* Control padding inside the renderer */
+      }
+      
+      /* PRINT STYLES - Solves Arabic Font Issues */
+      @media print {
+        @page { margin: 0; size: auto; }
+        body { background: white; color: black; }
+        
+        /* Hide everything except the CV */
+        header, .view-section, #mobile-menu, #offer-modal, #ats-modal, #ai-loading, .no-print {
+            display: none !important;
+        }
+        
+        /* Show only the CV container */
+        #view-builder { display: block !important; position: static !important; height: auto !important; overflow: visible !important; }
+        #cv-wrapper { 
+            transform: none !important; 
+            box-shadow: none !important; 
+            margin: 0 !important; 
+            width: 100% !important;
+            height: auto !important;
+        }
+        #preview-pane {
+            display: block !important;
+            position: static !important;
+            padding: 0 !important;
+            background: white !important;
+        }
+        .cv-paper {
+            box-shadow: none !important;
+            margin: 0 !important;
+            width: 100% !important;
+            page-break-after: auto;
+        }
+        
+        /* Hide builder sidebar controls during print */
+        .w-full.md\:w-\[45\%\].lg\:w-\[40\%\] { display: none !important; }
+        .absolute.top-4.left-4 { display: none !important; } /* Hide download buttons on paper */
       }
       
       /* Glass Utility */
@@ -156,7 +192,7 @@
   <body class="bg-dark text-secondary selection:bg-primary selection:text-white flex flex-col min-h-screen">
 
     <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5">
+    <header class="sticky top-0 z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5 no-print">
         <div class="container mx-auto px-4 h-20 flex items-center justify-between">
           
           <!-- Logo -->
@@ -176,7 +212,7 @@
             <a href="#" onclick="app.navigate('templates'); return false;" class="nav-link px-5 py-2 rounded-full text-sm font-medium text-gray-400 hover:text-white transition-all" data-target="templates">القوالب</a>
             <a href="#" onclick="app.navigate('ai-start'); return false;" class="nav-link px-5 py-2 rounded-full text-sm font-medium text-purple-400 hover:text-purple-300 transition-all flex items-center gap-2" data-target="ai-start">
                 <i data-lucide="sparkles" class="w-4 h-4"></i>
-                الذكاء الاصطناعي
+                صانع السيرة
             </a>
             <a href="#" onclick="app.navigate('job-guarantee'); return false;" class="nav-link px-5 py-2 rounded-full text-sm font-medium text-amber-400 hover:text-amber-300 transition-all flex items-center gap-2" data-target="job-guarantee">
                 <i data-lucide="crown" class="w-4 h-4"></i>
@@ -240,8 +276,8 @@
                     </h1>
                     
                     <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
-                      أنشئ سيرة ذاتية تتجاوز أنظمة الفرز (ATS) بذكاء اصطناعي متطور. 
-                      نحن نضمن لك الوصول للمقابلة، أو نعيد لك مالك.
+                      أنشئ سيرة ذاتية تتجاوز أنظمة الفرز (ATS) بذكاء اصطناعي دقيق. 
+                      نحن نرتب خبراتك، ولا نؤلفها.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -256,38 +292,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Features -->
-            <div class="py-24 bg-card/30 relative border-t border-white/5">
-                <div class="container mx-auto px-4">
-                  <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-white mb-4">لماذا يختار المحترفون سكور؟</h2>
-                    <div class="w-20 h-1 bg-gradient-to-r from-primary to-transparent mx-auto rounded-full"></div>
-                  </div>
-                  <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
-                        <div class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="shield-check" class="w-8 h-8"></i></div>
-                        <h3 class="text-xl font-bold text-white mb-3">ATS Friendly</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">قوالب "بريميوم" مصممة لتجاوز خوارزميات الفرز.</p>
-                    </div>
-                    <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
-                        <div class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="zap" class="w-8 h-8"></i></div>
-                        <h3 class="text-xl font-bold text-white mb-3">AI Powered</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">ذكاء اصطناعي يعيد صياغة خبراتك بعبارات احترافية.</p>
-                    </div>
-                    <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
-                        <div class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="building-2" class="w-8 h-8"></i></div>
-                        <h3 class="text-xl font-bold text-white mb-3">Targeted</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">استهداف مباشر لكلمات مفتاحية خاصة بـ أرامكو وسابك.</p>
-                    </div>
-                    <div class="glass-panel p-8 rounded-3xl hover:border-primary/50 transition-all">
-                        <div class="text-white mb-6 bg-gradient-to-br from-primary to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="award" class="w-8 h-8"></i></div>
-                        <h3 class="text-xl font-bold text-white mb-3">Premium Design</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">تصاميم مدفوعة تظهرك كخيار أول للمدراء.</p>
-                    </div>
-                  </div>
-                </div>
-            </div>
         </section>
 
         <!-- PAGE: AI START -->
@@ -298,39 +302,52 @@
                      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
                 </div>
 
-                <div class="container mx-auto px-4 relative z-10 max-w-2xl">
+                <div class="container mx-auto px-4 relative z-10 max-w-3xl">
                     <div class="bg-card/80 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
                         <div class="text-center mb-8">
                             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-indigo-600 text-white mb-6 shadow-lg shadow-primary/30">
-                                <i data-lucide="bot" class="w-8 h-8"></i>
+                                <i data-lucide="brain-circuit" class="w-8 h-8"></i>
                             </div>
-                            <h1 class="text-3xl md:text-4xl font-black text-white mb-3">المساعد الذكي لبناء السيرة</h1>
-                            <p class="text-gray-400 text-lg">أجب على بعض الأسئلة وسيقوم الـ AI بكتابة سيرة ذاتية كاملة لك متوافقة مع ATS.</p>
+                            <h1 class="text-3xl md:text-4xl font-black text-white mb-3">المنظم الذكي للسير الذاتية</h1>
+                            <p class="text-gray-400 text-lg">
+                                لا داعي لملء خانات متعددة. <br/> 
+                                <span class="text-primary font-bold">انسخ وألصق كل شيء هنا</span> (اسمك، رقمك، خبراتك، تعليمك) بشكل عشوائي، وسنقوم بترتيبه لك في سيرة ذاتية احترافية ATS.
+                            </p>
                         </div>
 
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-white font-bold mb-2">ما هو مسماك الوظيفي الحالي/المستهدف؟</label>
-                                <input type="text" id="ai-role" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none transition-all" placeholder="مثال: مدير مشاريع، محاسب، مهندس برمجيات...">
-                            </div>
                             
                             <div>
-                                <label class="block text-white font-bold mb-2">سنوات الخبرة</label>
-                                <select id="ai-exp-level" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none transition-all">
-                                    <option value="entry" class="bg-dark">حديث تخرج (0-2 سنة)</option>
-                                    <option value="mid" class="bg-dark">متوسط الخبرة (3-5 سنوات)</option>
-                                    <option value="senior" class="bg-dark">خبير (5+ سنوات)</option>
-                                    <option value="manager" class="bg-dark">مدير / قيادي</option>
-                                </select>
+                                <label class="block text-white font-bold mb-2 flex items-center gap-2">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+                                    الصق بياناتك هنا (لا يهم الترتيب)
+                                </label>
+                                <textarea id="ai-blob-input" rows="8" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none transition-all placeholder-gray-600 leading-relaxed" placeholder="مثال:
+أنا محمد خالد، رقم جوالي 0555555555
+خريج جامعة الملك سعود إدارة أعمال 2020
+اشتغلت في شركة زين كخدمة عملاء من 2021 الى 2022
+وبعدها في الراجحي صراف أول الى الان
+مهاراتي: اكسل، تواصل، لغة انجليزية جيدة..."></textarea>
                             </div>
 
-                            <div>
-                                <label class="block text-white font-bold mb-2">نبذة سريعة أو رابط LinkedIn (اختياري)</label>
-                                <textarea id="ai-context" rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none transition-all" placeholder="ألصق نص سيرتك القديمة هنا أو اكتب نبذة عن مهاراتك..."></textarea>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-white font-bold mb-2">لغة السيرة الذاتية</label>
+                                    <div class="flex bg-white/5 p-1 rounded-xl">
+                                        <button onclick="app.ai.setLang('ar')" id="btn-lang-ar" class="flex-1 py-2 rounded-lg text-sm font-bold bg-primary text-white transition-all">العربية</button>
+                                        <button onclick="app.ai.setLang('en')" id="btn-lang-en" class="flex-1 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">English</button>
+                                    </div>
+                                </div>
+                                <div class="flex items-end">
+                                     <div class="bg-yellow-500/10 border border-yellow-500/20 text-yellow-200 text-xs p-3 rounded-xl w-full">
+                                         <i data-lucide="alert-circle" class="inline w-3 h-3 mb-1"></i>
+                                         الذكاء الاصطناعي <strong>لن يؤلف</strong> معلومات غير موجودة. تأكد من كتابة كل التفاصيل المهمة.
+                                     </div>
+                                </div>
                             </div>
 
                             <button onclick="app.ai.generate()" class="w-full py-4 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary-light hover:to-primary text-white font-bold text-lg rounded-xl shadow-lg shadow-primary/30 transform hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-                                <i data-lucide="sparkles" class="w-5 h-5"></i> توليد السيرة الذاتية الآن
+                                <i data-lucide="wand-2" class="w-5 h-5"></i> تحليل وبناء السيرة الذاتية
                             </button>
                         </div>
                     </div>
@@ -342,8 +359,8 @@
         <section id="view-templates" class="view-section">
             <div class="container mx-auto px-4 py-20">
                 <div class="text-center mb-16">
-                    <h1 class="text-4xl font-black text-white mb-4">مكتبة القوالب الاحترافية</h1>
-                    <p class="text-gray-400 text-lg">أكثر من 50 قالب مصمم خصيصاً ليناسب الشركات الكبرى</p>
+                    <h1 class="text-4xl font-black text-white mb-4">قوالب ATS المعتمدة</h1>
+                    <p class="text-gray-400 text-lg">تصاميم نظيفة وواضحة تضمن مرور سيرتك من أنظمة الفرز الآلي</p>
                 </div>
                 <!-- Masonry Layout -->
                 <div class="columns-1 md:columns-2 lg:columns-3 gap-8" id="templates-grid">
@@ -357,25 +374,18 @@
             <div class="min-h-screen bg-[#0A0A0A] flex flex-col md:flex-row relative">
                 
                 <!-- Toggle Preview Button (Mobile) -->
-                <button onclick="app.builder.togglePreview()" class="md:hidden fixed bottom-6 left-6 z-50 bg-primary text-white p-4 rounded-full shadow-2xl shadow-primary/50 animate-bounce">
+                <button onclick="app.builder.togglePreview()" class="md:hidden fixed bottom-6 left-6 z-50 bg-primary text-white p-4 rounded-full shadow-2xl shadow-primary/50 animate-bounce no-print">
                     <i data-lucide="eye" class="w-6 h-6"></i>
                 </button>
 
                 <!-- Sidebar Form -->
-                <div class="w-full md:w-[45%] lg:w-[40%] bg-dark border-l border-white/5 flex flex-col h-screen overflow-hidden">
+                <div class="w-full md:w-[45%] lg:w-[40%] bg-dark border-l border-white/5 flex flex-col h-screen overflow-hidden no-print">
                     <div class="p-6 border-b border-white/5 flex flex-col gap-4 bg-dark z-20">
                         <div class="flex justify-between items-center">
-                            <h2 class="font-bold text-white flex items-center gap-2"><i data-lucide="edit-3" class="w-4 h-4 text-primary"></i> المحرر الاحترافي</h2>
-                            <div class="flex gap-2 bg-white/5 p-1 rounded-lg">
-                                <button onclick="app.builder.setLanguage('ar')" id="lang-ar" class="px-3 py-1 text-xs rounded-md font-bold transition-all bg-primary text-white">عربي</button>
-                                <button onclick="app.builder.setLanguage('en')" id="lang-en" class="px-3 py-1 text-xs rounded-md font-bold transition-all text-gray-400 hover:text-white">English</button>
+                            <h2 class="font-bold text-white flex items-center gap-2"><i data-lucide="edit-3" class="w-4 h-4 text-primary"></i> المحرر</h2>
+                            <div class="flex gap-2">
+                                <button onclick="app.navigate('ai-start')" class="text-xs bg-white/5 text-gray-400 px-3 py-2 rounded-lg hover:text-white flex items-center gap-1"><i data-lucide="rotate-ccw" class="w-3"></i> إعادة البناء</button>
                             </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="app.builder.analyzeATS()" class="flex-1 text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-3 py-2 rounded-lg font-bold flex items-center justify-center gap-1 hover:bg-green-500/20 transition-all">
-                                <i data-lucide="scan"></i> فحص ATS
-                            </button>
-                            <button onclick="app.navigate('templates')" class="text-xs bg-white/5 text-gray-400 px-3 py-2 rounded-lg hover:text-white">تغيير القالب</button>
                         </div>
                     </div>
 
@@ -400,8 +410,8 @@
                                     <div><label class="block text-xs font-bold text-gray-500 mb-2">الجوال</label><input type="text" id="inp-phone" oninput="app.builder.updatePreview()" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none text-left" dir="ltr" placeholder="Phone"></div>
                                 </div>
                                 <div>
-                                    <div class="flex justify-between mb-2"><label class="block text-xs font-bold text-gray-500">الملخص المهني</label><button onclick="app.builder.aiWrite('summary')" class="text-xs text-primary flex items-center gap-1 hover:underline"><i data-lucide="sparkles" class="w-3 h-3"></i> كتابة تلقائية</button></div>
-                                    <textarea id="inp-summary" oninput="app.builder.updatePreview()" rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none leading-relaxed" placeholder="اكتب نبذة مختصرة..."></textarea>
+                                    <div class="flex justify-between mb-2"><label class="block text-xs font-bold text-gray-500">الملخص المهني</label></div>
+                                    <textarea id="inp-summary" oninput="app.builder.updatePreview()" rows="6" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none leading-relaxed text-sm" placeholder="اكتب نبذة مختصرة..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -413,7 +423,7 @@
                                 <input type="text" id="inp-exp-role" oninput="app.builder.updatePreview()" class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2" placeholder="المسمى الوظيفي">
                                 <input type="text" id="inp-exp-comp" oninput="app.builder.updatePreview()" class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2" placeholder="الشركة">
                                 <input type="text" id="inp-exp-date" oninput="app.builder.updatePreview()" class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white mb-2" placeholder="الفترة (مثال: 2020 - الآن)">
-                                <textarea id="inp-exp-desc" oninput="app.builder.updatePreview()" rows="3" class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white" placeholder="الوصف..."></textarea>
+                                <textarea id="inp-exp-desc" oninput="app.builder.updatePreview()" rows="6" class="w-full bg-dark border border-white/10 rounded-lg p-3 text-sm text-white leading-relaxed" placeholder="الوصف والمهام..."></textarea>
                             </div>
                         </div>
 
@@ -429,17 +439,17 @@
                         <!-- Step 3: Skills -->
                         <div id="step-content-3" class="step-content hidden">
                             <label class="block text-xs font-bold text-gray-500 mb-2">المهارات (افصل بفاصلة)</label>
-                            <textarea id="inp-skills" oninput="app.builder.updatePreview()" rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none" placeholder="قيادة، إدارة وقت، Excel..."></textarea>
+                            <textarea id="inp-skills" oninput="app.builder.updatePreview()" rows="6" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none" placeholder="قيادة، إدارة وقت، Excel..."></textarea>
                         </div>
                     </div>
                 </div>
 
                 <!-- Preview Pane (Responsive) -->
-                <div id="preview-pane" class="hidden md:flex flex-col flex-grow bg-[#1a1a1a] items-center justify-center p-4 md:p-8 fixed inset-0 z-40 md:static">
-                    <div class="absolute top-4 left-4 md:top-6 md:left-6 flex gap-2 z-50">
+                <div id="preview-pane" class="hidden md:flex flex-col flex-grow bg-[#525659] items-center justify-center p-4 md:p-8 fixed inset-0 z-40 md:static">
+                    <div class="absolute top-4 left-4 md:top-6 md:left-6 flex gap-2 z-50 no-print">
                          <button onclick="app.builder.togglePreview()" class="md:hidden bg-white/10 text-white p-2 rounded-full"><i data-lucide="x"></i></button>
-                         <button onclick="app.builder.downloadPdf()" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
-                            <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden md:inline">تحميل PDF</span>
+                         <button onclick="window.print()" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden md:inline">طباعة / PDF</span>
                          </button>
                     </div>
 
@@ -447,43 +457,6 @@
                     <div id="cv-wrapper" class="origin-top shadow-2xl transition-all duration-300 mt-12 md:mt-0">
                         <div id="cv-preview" class="cv-paper">
                              <!-- Content injected via JS based on template -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Other Pages (Dashboard, Auth, etc. - kept simple) -->
-        <section id="view-dashboard" class="view-section">
-             <div class="min-h-screen bg-dark pt-24 px-4 text-center">
-                 <h1 class="text-white text-2xl font-bold mb-8">لوحة التحكم</h1>
-                 <button onclick="app.navigate('jobs-tracking')" class="px-8 py-4 bg-amber-500 text-black font-bold rounded-xl text-lg hover:scale-105 transition-transform flex items-center gap-2 mx-auto">
-                     <i data-lucide="briefcase"></i>
-                     تتبع التوظيف المضمون
-                 </button>
-             </div>
-        </section>
-        
-        <!-- USER JOB TRACKING -->
-        <section id="view-jobs-tracking" class="view-section">
-            <div class="min-h-screen bg-dark pt-24 px-4 pb-20">
-                <div class="container mx-auto max-w-5xl">
-                    <div class="flex items-center gap-2 mb-8 text-gray-400 text-sm">
-                        <button onclick="app.navigate('dashboard')" class="hover:text-white">الرئيسية</button> / <span class="text-white">تتبع التوظيف</span>
-                    </div>
-                    
-                    <!-- Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="user-stats-grid">
-                        <!-- Injected via JS -->
-                    </div>
-
-                    <div class="bg-card border border-white/5 rounded-3xl overflow-hidden">
-                        <div class="p-6 border-b border-white/5 flex justify-between items-center">
-                            <h2 class="font-bold text-white text-xl flex items-center gap-2"><i data-lucide="list" class="text-primary"></i> سجل التقديم</h2>
-                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">محدث</span>
-                        </div>
-                        <div id="user-jobs-list" class="divide-y divide-white/5">
-                            <!-- Injected via JS -->
                         </div>
                     </div>
                 </div>
@@ -762,7 +735,7 @@
     </main>
 
     <!-- OFFER MODAL -->
-    <div id="offer-modal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+    <div id="offer-modal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in no-print">
         <div class="bg-gradient-to-br from-[#1a1500] to-[#0a0a0a] border border-gold/30 w-full max-w-lg rounded-3xl p-1 relative overflow-hidden shadow-[0_0_50px_rgba(245,158,11,0.2)]">
             <div class="bg-[#0f0f0f] rounded-[22px] p-8 relative z-10">
                 <button onclick="document.getElementById('offer-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
@@ -780,7 +753,7 @@
     </div>
 
     <!-- ATS Modal -->
-    <div id="ats-modal" class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div id="ats-modal" class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 no-print">
          <div class="bg-[#151515] border border-white/10 rounded-3xl w-full max-w-md p-8 relative animate-fade-up">
              <button onclick="document.getElementById('ats-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
              <div class="text-center mb-6">
@@ -793,10 +766,10 @@
     </div>
 
     <!-- AI Writer Loading -->
-    <div id="ai-loading" class="hidden fixed inset-0 z-[60] bg-black/90 flex items-center justify-center">
+    <div id="ai-loading" class="hidden fixed inset-0 z-[60] bg-black/90 flex items-center justify-center no-print">
          <div class="text-center">
              <div class="loader mx-auto mb-4"></div>
-             <h2 id="ai-loading-text" class="text-xl font-bold text-white animate-pulse">الذكاء الاصطناعي يكتب الآن...</h2>
+             <h2 id="ai-loading-text" class="text-xl font-bold text-white animate-pulse">الذكاء الاصطناعي يرتب سيرتك...</h2>
          </div>
     </div>
 
@@ -849,6 +822,9 @@
                 if(typeof lucide !== 'undefined') {
                     setTimeout(() => lucide.createIcons(), 100);
                 }
+                
+                // Dynamic Resize Trigger
+                setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
             }
         },
 
@@ -1070,13 +1046,24 @@
         },
         
         ai: {
-            generate: async function() {
-                const role = document.getElementById('ai-role').value;
-                const level = document.getElementById('ai-exp-level').value;
-                const context = document.getElementById('ai-context').value;
+            lang: 'ar',
+            
+            setLang: function(l) {
+                this.lang = l;
+                document.getElementById('btn-lang-ar').classList.toggle('bg-primary', l === 'ar');
+                document.getElementById('btn-lang-ar').classList.toggle('text-white', l === 'ar');
+                document.getElementById('btn-lang-ar').classList.toggle('text-gray-400', l !== 'ar');
                 
-                if(!role) {
-                    alert('يرجى إدخال المسمى الوظيفي');
+                document.getElementById('btn-lang-en').classList.toggle('bg-primary', l === 'en');
+                document.getElementById('btn-lang-en').classList.toggle('text-white', l === 'en');
+                document.getElementById('btn-lang-en').classList.toggle('text-gray-400', l !== 'en');
+            },
+
+            generate: async function() {
+                const rawText = document.getElementById('ai-blob-input').value;
+                
+                if(!rawText || rawText.length < 10) {
+                    alert('يرجى كتابة أو لصق بياناتك في الصندوق');
                     return;
                 }
 
@@ -1084,41 +1071,49 @@
                 const loadingText = document.getElementById('ai-loading-text');
                 loadingModal.classList.remove('hidden');
                 
-                // --- REAL AI GENERATION LOGIC ---
                 try {
                     let generatedData;
                     
-                    // Attempt to use Real API if available
                     if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-                        loadingText.innerText = "جاري الاتصال بالذكاء الاصطناعي...";
+                        loadingText.innerText = "جاري تحليل البيانات واستخراج المعلومات...";
                         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                        
+                        // Strict Extraction Prompt
                         const prompt = `
-                            Act as a professional CV writer in Arabic.
-                            Create a professional CV profile for a candidate targeting the role: "${role}".
-                            Experience Level: "${level}".
-                            Additional Context provided by user (use this to customize the summary and experience): "${context}".
+                            You are a strict data extractor for a CV application.
+                            Analyze the following unstructured text provided by a user:
+                            "${rawText}"
 
-                            Return a strictly valid JSON object (no markdown) with this structure:
+                            Task: Extract the following fields into a valid JSON object.
+                            Target Language for Output: ${this.lang === 'ar' ? 'Arabic' : 'English'}.
+                            
+                            Rules:
+                            1. EXTRACT ONLY. Do not invent, hallucinate, or add any university, company, or experience not explicitly mentioned in the text.
+                            2. If a field (like email or phone) is missing in the text, return an empty string "".
+                            3. Format dates as "Year" or "Month Year" if available.
+                            4. Format the 'summary' to be professional and ATS-friendly based ONLY on the provided skills and experience.
+                            5. Structure the JSON exactly like this:
                             {
-                              "name": "الاسم الكامل (placeholder)",
-                              "title": "${role}",
-                              "email": "email@example.com",
-                              "phone": "9665xxxxxxxx",
-                              "summary": "Professional summary in Arabic based on context...",
+                              "name": "String",
+                              "title": "String (Job Title)",
+                              "email": "String",
+                              "phone": "String",
+                              "summary": "String",
                               "exp": {
-                                "role": "Most recent job title",
-                                "comp": "Company Name",
-                                "date": "Date Range",
-                                "desc": "Bullet points of achievements based on role"
+                                "role": "String (Most recent job)",
+                                "comp": "String (Company Name)",
+                                "date": "String",
+                                "desc": "String (Bullet points)"
                               },
                               "edu": {
-                                "deg": "Degree",
-                                "uni": "University",
-                                "year": "Year"
+                                "deg": "String (Degree)",
+                                "uni": "String (University)",
+                                "year": "String"
                               },
-                              "skills": "Skill1, Skill2, Skill3..."
+                              "skills": "String (Comma separated)"
                             }
                         `;
+                        
                         const response = await ai.models.generateContent({
                             model: 'gemini-2.5-flash',
                             contents: prompt
@@ -1127,47 +1122,45 @@
                         const text = response.text.replace(/```json|```/g, '').trim();
                         generatedData = JSON.parse(text);
                     } else {
-                        // Fallback Simulation if no Key
-                        await new Promise(r => setTimeout(r, 2000)); // Simulate delay
-                        generatedData = this.getMockData(role, level, context);
+                        // Fallback Simulation
+                        await new Promise(r => setTimeout(r, 2000));
+                        generatedData = this.getMockData(rawText);
                     }
 
                     this.finalizeGeneration(generatedData);
 
                 } catch (error) {
                     console.error("AI Generation Error:", error);
-                    // Fallback to mock on error
-                    const fallbackData = this.getMockData(role, level, context);
+                    const fallbackData = this.getMockData(rawText);
                     this.finalizeGeneration(fallbackData);
                 }
             },
 
-            getMockData: function(role, level, context) {
+            getMockData: function(text) {
                 return {
-                    name: "اسم المستخدم",
-                    title: role,
-                    email: "email@example.com",
-                    phone: "966500000000",
-                    summary: context ? 
-                        `محترف متخصص في ${role}. ${context}. أمتلك خبرة عملية واسعة وسجلاً حافلاً في تحقيق الأهداف.` : 
-                        `محترف متخصص في ${role} مع خبرة عملية واسعة. أمتلك سجلاً حافلاً في تحقيق الأهداف وزيادة الكفاءة التشغيلية.`,
+                    name: "مستخدم تجريبي",
+                    title: "مدير مشاريع",
+                    email: "user@example.com",
+                    phone: "0500000000",
+                    summary: "مدير مشاريع ذو خبرة في إدارة الفرق وتحقيق الأهداف الزمنية.",
                     exp: {
-                        role: role,
-                        comp: "شركة رائدة",
-                        date: "2021 - الآن",
-                        desc: "• إدارة وتطوير العمليات اليومية لضمان سير العمل بكفاءة.\n• تحقيق زيادة في الإنتاجية.\n• التعاون مع الأقسام المختلفة لتحقيق أهداف الشركة الاستراتيجية."
+                        role: "مدير مشاريع",
+                        comp: "شركة التقنية المتقدمة",
+                        date: "2022 - الآن",
+                        desc: "• إدارة المشاريع التقنية.\n• تحسين سير العمل."
                     },
                     edu: {
-                        deg: "بكالوريوس",
+                        deg: "بكالوريوس إدارة أعمال",
                         uni: "جامعة الملك سعود",
                         year: "2020"
                     },
-                    skills: "تخطيط استراتيجي, إدارة وقت, عمل جماعي, حل المشكلات, لغة إنجليزية, MS Office"
+                    skills: "إدارة مشاريع, تواصل, تخطيط"
                 };
             },
 
             finalizeGeneration: function(data) {
                 app.state.data = data;
+                app.state.lang = this.lang;
                 
                 // Update Inputs DOM
                 const safeVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
@@ -1185,6 +1178,9 @@
                 safeVal('inp-edu-uni', data.edu?.uni);
                 safeVal('inp-edu-year', data.edu?.year);
                 safeVal('inp-skills', data.skills);
+
+                // Set language in builder
+                app.builder.setLanguage(this.lang);
 
                 document.getElementById('ai-loading').classList.add('hidden');
                 app.navigate('builder');
@@ -1232,23 +1228,6 @@
                 // Trigger dynamic resize logic
                 window.dispatchEvent(new Event('resize'));
             },
-            
-            downloadPdf: function() {
-                const element = document.getElementById('cv-preview');
-                const opt = {
-                  margin: 0,
-                  filename: 'score_cv.pdf',
-                  image: { type: 'jpeg', quality: 0.98 },
-                  html2canvas: { scale: 2 },
-                  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-                
-                // Add print class for styling if needed
-                element.classList.add('printing');
-                html2pdf().set(opt).from(element).save().then(() => {
-                    element.classList.remove('printing');
-                });
-            },
 
             updatePreview: function() {
                 try {
@@ -1278,315 +1257,53 @@
 
                     let html = '';
 
-                    // --- 1. IMPERIAL ATS (Classic Refined) ---
-                    if (template === 'classic') {
+                    // --- 1. IMPERIAL ATS (Cleanest for Parsing) ---
+                    // Default template for optimal ATS parsing
+                    if (template === 'classic' || true) { 
                         html = `
-                            <div class="h-full bg-white text-gray-900 p-12 ${isAr ? 'font-serif' : 'font-serif'}" dir="${dir}">
+                            <div class="h-full bg-white text-gray-900 p-12 ${isAr ? 'font-sans' : 'font-serif'}" dir="${dir}" style="line-height: 1.6;">
                                 <header class="border-b-2 border-gray-800 pb-6 mb-8 text-center">
-                                    <h1 class="text-4xl font-bold uppercase tracking-wide mb-3 text-gray-900">${data.name || (isAr?'الاسم':'Your Name')}</h1>
+                                    <h1 class="text-4xl font-bold uppercase tracking-wide mb-2 text-gray-900">${data.name || (isAr?'الاسم':'Your Name')}</h1>
                                     <p class="text-xl font-medium mb-4 text-gray-600 tracking-wide">${data.title || (isAr?'المسمى':'Job Title')}</p>
-                                    <div class="flex justify-center flex-wrap gap-4 text-sm font-medium text-gray-500">
-                                        <span>${data.email}</span> <span class="text-gray-300">|</span> <span>${data.phone}</span>
+                                    <div class="flex justify-center flex-wrap gap-4 text-sm font-medium text-gray-600" dir="ltr">
+                                        <span>${data.email}</span> 
+                                        ${data.email && data.phone ? '<span class="text-gray-300">|</span>' : ''} 
+                                        <span>${data.phone}</span>
                                     </div>
                                 </header>
                                 <section class="mb-8">
-                                    <h3 class="font-bold text-lg uppercase border-b border-gray-200 mb-3 pb-1 tracking-wider text-gray-800">${L.summary}</h3>
-                                    <p class="text-sm leading-relaxed text-justify text-gray-700 font-medium">${data.summary}</p>
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-3 pb-1 tracking-wider text-gray-900">${L.summary}</h3>
+                                    <p class="text-base leading-relaxed text-justify text-gray-800 font-normal">${data.summary}</p>
                                 </section>
                                 <section class="mb-8">
-                                    <h3 class="font-bold text-lg uppercase border-b border-gray-200 mb-4 pb-1 tracking-wider text-gray-800">${L.exp}</h3>
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-4 pb-1 tracking-wider text-gray-900">${L.exp}</h3>
                                     <div class="mb-5">
                                         <div class="flex justify-between items-baseline mb-1">
-                                            <h4 class="font-bold text-base text-gray-900">${data.exp.role}</h4>
-                                            <span class="text-sm font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">${data.exp.date}</span>
+                                            <h4 class="font-bold text-lg text-gray-900">${data.exp.role}</h4>
+                                            <span class="text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1 rounded">${data.exp.date}</span>
                                         </div>
-                                        <div class="text-sm font-bold text-gray-600 mb-2 uppercase tracking-wide">${data.exp.comp}</div>
-                                        <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line pl-2 border-l-2 border-gray-100">${data.exp.desc}</p>
+                                        <div class="text-base font-bold text-gray-600 mb-2 uppercase tracking-wide">${data.exp.comp}</div>
+                                        <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-line pl-2 border-l-2 border-gray-200">${data.exp.desc}</p>
                                     </div>
                                 </section>
                                 <section class="mb-8">
-                                    <h3 class="font-bold text-lg uppercase border-b border-gray-200 mb-4 pb-1 tracking-wider text-gray-800">${L.edu}</h3>
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-4 pb-1 tracking-wider text-gray-900">${L.edu}</h3>
                                     <div class="flex justify-between items-baseline">
-                                        <div><span class="font-bold block text-gray-900">${data.edu.deg}</span><span class="text-sm text-gray-600">${data.edu.uni}</span></div>
-                                        <span class="text-sm font-medium text-gray-500">${data.edu.year}</span>
+                                        <div>
+                                            <span class="font-bold text-lg block text-gray-900">${data.edu.deg}</span>
+                                            <span class="text-base text-gray-700">${data.edu.uni}</span>
+                                        </div>
+                                        <span class="text-sm font-bold text-gray-700">${data.edu.year}</span>
                                     </div>
                                 </section>
                                 <section>
-                                    <h3 class="font-bold text-lg uppercase border-b border-gray-200 mb-3 pb-1 tracking-wider text-gray-800">${L.skills}</h3>
-                                    <div class="flex flex-wrap gap-2 text-sm text-gray-700 leading-7">
-                                        ${data.skills.split(',').map(s=> `<span class="bg-gray-100 px-2 py-1 rounded border border-gray-200">${s.trim()}</span>`).join('')}
+                                    <h3 class="font-bold text-lg uppercase border-b border-gray-300 mb-3 pb-1 tracking-wider text-gray-900">${L.skills}</h3>
+                                    <div class="flex flex-wrap gap-2 text-sm text-gray-800 leading-7">
+                                        ${data.skills.split(',').map(s=> s.trim() ? `<span class="bg-gray-100 px-3 py-1 rounded border border-gray-200 font-medium">${s.trim()}</span>` : '').join('')}
                                     </div>
                                 </section>
                             </div>`;
                     }
-                    // --- 2. ONYX PRO (Modern Sidebar) ---
-                    else if (template === 'modern') {
-                        html = `
-                            <div class="h-full bg-white flex ${isAr ? 'font-sans' : 'font-english'}" dir="${dir}">
-                                <aside class="w-[32%] bg-[#1E293B] text-white p-8 pt-12 flex flex-col gap-8">
-                                    <div class="flex justify-center"><div class="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center text-4xl font-bold border-4 border-white/20 shadow-xl">${(data.name||'A').charAt(0)}</div></div>
-                                    <div>
-                                        <h3 class="text-xs font-bold uppercase text-blue-300 border-b border-white/10 pb-2 mb-3 tracking-widest">${L.contact}</h3>
-                                        <div class="text-xs space-y-3 font-light text-slate-300 break-all">
-                                            <div class="flex items-center gap-2"><i data-lucide="mail" class="w-3"></i> ${data.email}</div>
-                                            <div class="flex items-center gap-2"><i data-lucide="phone" class="w-3"></i> ${data.phone}</div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-xs font-bold uppercase text-blue-300 border-b border-white/10 pb-2 mb-3 tracking-widest">${L.edu}</h3>
-                                        <div class="text-sm font-bold text-white">${data.edu.deg}</div>
-                                        <div class="text-xs text-slate-400 mt-1">${data.edu.uni}</div>
-                                        <div class="text-xs text-slate-500 mt-1">${data.edu.year}</div>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-xs font-bold uppercase text-blue-300 border-b border-white/10 pb-2 mb-3 tracking-widest">${L.skills}</h3>
-                                        <div class="flex flex-wrap gap-2">
-                                            ${data.skills.split(',').map(s=>`<span class="text-[10px] bg-white/10 px-2 py-1 rounded text-white border border-white/10">${s.trim()}</span>`).join('')}
-                                        </div>
-                                    </div>
-                                </aside>
-                                <main class="w-[68%] p-10 pt-12 text-slate-800">
-                                    <header class="mb-10 border-b-2 border-blue-600 pb-6">
-                                        <h1 class="text-5xl font-black uppercase text-slate-900 mb-2 tracking-tight leading-none">${data.name}</h1>
-                                        <p class="text-xl text-blue-600 font-medium tracking-wide">${data.title}</p>
-                                    </header>
-                                    <section class="mb-10">
-                                        <h3 class="font-bold text-slate-900 mb-3 uppercase text-sm tracking-wider flex items-center gap-2"><div class="w-2 h-2 bg-blue-600 rounded-full"></div> ${L.summary}</h3>
-                                        <p class="text-sm text-slate-600 leading-relaxed text-justify font-medium">${data.summary}</p>
-                                    </section>
-                                    <section>
-                                        <h3 class="font-bold text-slate-900 mb-5 uppercase text-sm tracking-wider flex items-center gap-2"><div class="w-2 h-2 bg-blue-600 rounded-full"></div> ${L.exp}</h3>
-                                        <div class="relative border-l-2 border-slate-100 pl-6 ml-1 space-y-6">
-                                            <div>
-                                                <div class="flex justify-between items-baseline mb-1">
-                                                    <h4 class="font-bold text-xl text-slate-800">${data.exp.role}</h4>
-                                                    <span class="text-xs font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded-full">${data.exp.date}</span>
-                                                </div>
-                                                <div class="text-sm font-bold text-blue-600 mb-3 uppercase tracking-wide">${data.exp.comp}</div>
-                                                <p class="text-sm text-slate-600 leading-relaxed font-medium">${data.exp.desc}</p>
-                                            </div>
-                                        </div>
-                                    </section>
-                                </main>
-                            </div>`;
-                    }
-                    // --- 3. CANVAS ELITE (Creative) ---
-                    else if (template === 'creative') {
-                        html = `
-                            <div class="h-full bg-white text-gray-800 ${isAr ? 'font-sans' : 'font-english'}" dir="${dir}">
-                                <div class="bg-[#7C3AED] text-white p-12 relative overflow-hidden">
-                                    <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/10 to-transparent"></div>
-                                    <h1 class="text-6xl font-black mb-3 relative z-10 tracking-tight">${data.name}</h1>
-                                    <p class="text-2xl font-light opacity-90 relative z-10 tracking-wide border-l-4 border-white/30 pl-4">${data.title}</p>
-                                </div>
-                                <div class="p-12 grid grid-cols-12 gap-10">
-                                    <div class="col-span-8">
-                                        <div class="mb-10">
-                                            <h3 class="font-black text-xl mb-4 flex items-center gap-2 text-gray-900"><span class="w-8 h-1.5 bg-[#7C3AED] rounded-full"></span> ${L.summary}</h3>
-                                            <p class="text-sm leading-7 text-gray-600 text-justify font-medium">${data.summary}</p>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-black text-xl mb-6 flex items-center gap-2 text-gray-900"><span class="w-8 h-1.5 bg-[#7C3AED] rounded-full"></span> ${L.exp}</h3>
-                                            <div class="group">
-                                                <div class="flex justify-between items-center mb-2">
-                                                    <h4 class="font-bold text-xl text-gray-900 group-hover:text-[#7C3AED] transition-colors">${data.exp.role}</h4>
-                                                    <span class="text-xs font-bold text-white bg-gray-900 px-3 py-1 rounded shadow">${data.exp.date}</span>
-                                                </div>
-                                                <div class="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="building" class="w-4"></i> ${data.exp.comp}</div>
-                                                <p class="text-sm text-gray-600 leading-relaxed border-l-4 border-gray-100 pl-4 py-2">${data.exp.desc}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-span-4 space-y-8">
-                                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                                            <h3 class="font-bold mb-4 text-gray-900 border-b-2 border-gray-200 pb-2">${L.contact}</h3>
-                                            <div class="text-sm space-y-3 text-gray-600">
-                                                <div class="truncate font-medium flex items-center gap-2"><div class="w-2 h-2 bg-[#7C3AED] rounded-full"></div> ${data.email}</div>
-                                                <div class="font-medium flex items-center gap-2"><div class="w-2 h-2 bg-[#7C3AED] rounded-full"></div> ${data.phone}</div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold mb-4 text-gray-900 border-b-2 border-gray-200 pb-2">${L.edu}</h3>
-                                            <div class="text-sm">
-                                                <div class="font-bold text-gray-900 text-base mb-1">${data.edu.deg}</div>
-                                                <div class="text-[#7C3AED] font-bold">${data.edu.uni}</div>
-                                                <div class="text-gray-400 text-xs mt-1 font-bold bg-gray-100 px-2 py-1 rounded w-fit">${data.edu.year}</div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold mb-4 text-gray-900 border-b-2 border-gray-200 pb-2">${L.skills}</h3>
-                                            <div class="flex flex-wrap gap-2">
-                                                ${data.skills.split(',').map(s=>`<span class="bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold text-gray-700 shadow-sm">${s.trim()}</span>`).join('')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                    }
-                    // --- 4. MINIMAL (Clean) ---
-                    else if (template === 'minimal') {
-                         html = `
-                            <div class="h-full bg-white text-black p-14 ${isAr ? 'font-sans' : 'font-english'}" dir="${dir}">
-                                <div class="border-b-[6px] border-black pb-8 mb-10">
-                                    <h1 class="text-6xl font-black uppercase tracking-tighter mb-2">${data.name}</h1>
-                                    <p class="text-3xl font-light text-gray-500">${data.title}</p>
-                                </div>
-                                <div class="grid grid-cols-12 gap-12">
-                                    <div class="col-span-4 space-y-10">
-                                        <div>
-                                            <h3 class="font-black text-lg uppercase mb-4 border-b-2 border-gray-100 pb-2 tracking-widest">${L.contact}</h3>
-                                            <div class="text-sm space-y-3 text-gray-600 font-medium">
-                                                <div>${data.email}</div>
-                                                <div>${data.phone}</div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-black text-lg uppercase mb-4 border-b-2 border-gray-100 pb-2 tracking-widest">${L.edu}</h3>
-                                            <div class="text-sm">
-                                                <strong class="block text-lg mb-1">${data.edu.deg}</strong>
-                                                <span class="text-gray-600 block font-medium">${data.edu.uni}</span>
-                                                <span class="text-gray-400 text-xs font-bold">${data.edu.year}</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-black text-lg uppercase mb-4 border-b-2 border-gray-100 pb-2 tracking-widest">${L.skills}</h3>
-                                            <ul class="text-sm text-gray-600 space-y-2 font-medium">
-                                                ${data.skills.split(',').map(s => `<li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-black rounded-full"></div>${s.trim()}</li>`).join('')}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="col-span-8 space-y-10">
-                                        <div>
-                                            <h3 class="font-black text-lg uppercase mb-4 border-b-2 border-gray-100 pb-2 tracking-widest">${L.summary}</h3>
-                                            <p class="text-sm leading-8 text-justify font-medium text-gray-700">${data.summary}</p>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-black text-lg uppercase mb-4 border-b-2 border-gray-100 pb-2 tracking-widest">${L.exp}</h3>
-                                            <div class="mb-8">
-                                                <div class="flex justify-between items-baseline mb-2">
-                                                    <h4 class="font-black text-2xl">${data.exp.role}</h4>
-                                                    <span class="text-xs font-black bg-black text-white px-3 py-1 rounded-full">${data.exp.date}</span>
-                                                </div>
-                                                <div class="text-sm font-bold text-gray-500 mb-4 uppercase tracking-widest">${data.exp.comp}</div>
-                                                <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line border-l-4 border-gray-100 pl-6 py-1 font-medium">${data.exp.desc}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                    }
-                    // --- 5. TECH (Dev) ---
-                    else if (template === 'tech') {
-                        html = `
-                            <div class="h-full bg-[#1e1e1e] text-gray-300 p-10 font-mono" dir="${dir}">
-                                <div class="border border-green-500/30 p-8 rounded-lg mb-8 bg-[#252526] shadow-lg shadow-black/50">
-                                    <div class="flex items-center gap-2 text-green-500 mb-4 text-xs">
-                                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                        <span class="ml-2 opacity-50">root@score-cv:~#</span>
-                                    </div>
-                                    <h1 class="text-5xl font-bold text-white mb-2"><span class="text-green-500 animate-pulse">>_</span> ${data.name}</h1>
-                                    <p class="text-2xl text-green-400 mb-4 font-bold">${data.title}</p>
-                                    <div class="flex gap-4 text-xs font-bold text-gray-400 border-t border-white/10 pt-4 mt-4">
-                                        <span>[ ${data.email} ]</span>
-                                        <span>[ ${data.phone} ]</span>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-12 gap-6">
-                                    <div class="col-span-8 space-y-6">
-                                        <div class="bg-[#252526] p-6 rounded border border-gray-700">
-                                            <h3 class="text-white font-bold mb-2 flex items-center gap-2"><span class="text-blue-400">const</span> ${L.summary} = "</h3>
-                                            <p class="text-sm leading-6 pl-4 border-l-2 border-gray-700 text-gray-400 font-medium">${data.summary}";</p>
-                                        </div>
-                                        <div class="bg-[#252526] p-6 rounded border border-gray-700">
-                                            <h3 class="text-white font-bold mb-4 flex items-center gap-2"><span class="text-purple-400">function</span> ${L.exp}() {</h3>
-                                            <div class="pl-4 border-l-2 border-gray-700 ml-2">
-                                                <div class="mb-4">
-                                                    <div class="text-yellow-300 font-bold text-lg">${data.exp.role} <span class="text-gray-500">@</span> ${data.exp.comp}</div>
-                                                    <div class="text-xs text-gray-500 mb-2">// ${data.exp.date}</div>
-                                                    <p class="text-sm text-gray-400 whitespace-pre-line font-medium">/* <br/> ${data.exp.desc} <br/> */</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-white font-bold mt-2">}</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-span-4 space-y-6">
-                                        <div class="bg-[#252526] p-5 rounded border border-gray-700">
-                                            <h3 class="text-white font-bold mb-3 border-b border-gray-700 pb-2">git status --skills</h3>
-                                            <div class="flex flex-wrap gap-2">
-                                                ${data.skills.split(',').map(s => `<span class="text-xs bg-blue-900/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30 font-bold">${s.trim()}</span>`).join('')}
-                                            </div>
-                                        </div>
-                                        <div class="bg-[#252526] p-5 rounded border border-gray-700">
-                                            <h3 class="text-white font-bold mb-3 border-b border-gray-700 pb-2">npm install education</h3>
-                                            <div class="text-sm">
-                                                <div class="text-green-400 font-bold text-lg">${data.edu.deg}</div>
-                                                <div class="text-gray-400 font-bold">${data.edu.uni}</div>
-                                                <div class="text-xs text-gray-600 mt-2 border border-gray-700 w-fit px-2 rounded">${data.edu.year}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                    }
-                    // --- 6. EXECUTIVE ---
-                    else if (template === 'executive') {
-                         html = `
-                            <div class="h-full bg-white text-gray-900 ${isAr ? 'font-serif' : 'font-serif'}" dir="${dir}">
-                                <div class="bg-[#0f172a] text-white p-16 flex justify-between items-center relative overflow-hidden">
-                                    <div class="absolute right-0 top-0 h-full w-32 bg-white/5 transform skew-x-12"></div>
-                                    <div class="relative z-10">
-                                        <h1 class="text-5xl font-bold uppercase tracking-widest mb-2">${data.name}</h1>
-                                        <p class="text-xl text-gray-400 tracking-[0.2em] uppercase border-t border-gray-600 pt-2 inline-block">${data.title}</p>
-                                    </div>
-                                    <div class="text-right text-sm text-gray-300 leading-7 font-medium relative z-10 border-r-2 border-gray-600 pr-6 mr-4">
-                                        <div>${data.email}</div>
-                                        <div>${data.phone}</div>
-                                        <div>${data.location || 'Saudi Arabia'}</div>
-                                    </div>
-                                </div>
-                                <div class="p-16">
-                                    <div class="border-l-4 border-[#0f172a] pl-8 mb-12 bg-gray-50 py-6 pr-6 rounded-r-xl">
-                                        <h3 class="text-xl font-bold text-[#0f172a] uppercase mb-3 tracking-widest">${L.summary}</h3>
-                                        <p class="text-lg leading-relaxed text-gray-700 text-justify font-medium">${data.summary}</p>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-12 gap-12">
-                                        <div class="col-span-8">
-                                            <h3 class="text-xl font-bold text-[#0f172a] uppercase mb-8 border-b-2 border-gray-200 pb-2 tracking-widest">${L.exp}</h3>
-                                            <div class="mb-10 relative">
-                                                <div class="absolute -right-3 top-2 w-3 h-3 bg-[#0f172a] rounded-full"></div>
-                                                <div class="flex justify-between items-baseline mb-2 border-r-2 border-gray-200 pr-6 mr-[-7px]">
-                                                    <h4 class="font-bold text-2xl text-gray-900">${data.exp.role}</h4>
-                                                    <span class="font-bold text-gray-500 text-sm">${data.exp.date}</span>
-                                                </div>
-                                                <div class="text-md font-bold text-[#0f172a] mb-4 uppercase tracking-wider pr-6">${data.exp.comp}</div>
-                                                <p class="text-md text-gray-700 whitespace-pre-line leading-8 font-medium pr-6 text-justify">${data.exp.desc}</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-span-4 space-y-12">
-                                            <div>
-                                                <h3 class="text-xl font-bold text-[#0f172a] uppercase mb-6 border-b-2 border-gray-200 pb-2 tracking-widest">${L.skills}</h3>
-                                                <div class="space-y-3">
-                                                     ${data.skills.split(',').map(s => `<div class="flex items-center gap-3"><div class="w-2 h-2 bg-[#0f172a] rotate-45"></div><span class="font-bold text-gray-700">${s.trim()}</span></div>`).join('')}
-                                                </div>
-                                            </div>
-                                             <div>
-                                                <h3 class="text-xl font-bold text-[#0f172a] uppercase mb-6 border-b-2 border-gray-200 pb-2 tracking-widest">${L.edu}</h3>
-                                                <div class="bg-gray-50 p-4 rounded border border-gray-200">
-                                                    <div class="font-bold text-xl text-gray-900 mb-1">${data.edu.deg}</div>
-                                                    <div class="text-gray-600 font-bold">${data.edu.uni}</div>
-                                                    <div class="text-gray-400 mt-2 text-sm font-bold">${data.edu.year}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                    }
-
 
                     container.innerHTML = html;
                     if(typeof lucide !== 'undefined') lucide.createIcons();
@@ -1596,30 +1313,8 @@
                 }
             },
 
-            aiWrite: function(fieldId) {
-                const modal = document.getElementById('ai-loading');
-                if (modal) {
-                    modal.classList.remove('hidden');
-                    document.getElementById('ai-loading-text').innerText = "جاري صياغة المحتوى...";
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        const dummy = "محترف متمرس ذو سجل حافل في إدارة المشاريع، يمتلك مهارات قيادية قوية وقدرة على حل المشكلات المعقدة لزيادة الكفاءة.";
-                        const input = document.getElementById('inp-' + fieldId);
-                        if (input) {
-                            input.value = dummy;
-                            this.updatePreview();
-                        }
-                    }, 1000);
-                }
-            },
-
             analyzeATS: function() { 
                 const modal = document.getElementById('ats-modal');
-                if (modal) modal.classList.remove('hidden');
-            },
-            
-            finish: function() {
-                const modal = document.getElementById('offer-modal');
                 if (modal) modal.classList.remove('hidden');
             }
         },
@@ -1668,17 +1363,15 @@
                   // Set scale
                   wrapper.style.transform = `scale(${scale})`;
                   
-                  // Adjust height of container to match scaled height to prevent massive whitespace
-                  // A4 Height ~ 1123px
+                  // Adjust height of container to match scaled height
                   const scaledHeight = 1123 * scale;
                   wrapper.style.height = `${scaledHeight}px`;
-                  wrapper.style.width = `${a4Width}px`; // Keep internal width fixed
-                  // wrapper.style.marginBottom = `-${1123 - scaledHeight}px`; // Negative margin hack if origin is center, but here origin is top
+                  wrapper.style.width = `${a4Width}px`; 
               }
 
               window.addEventListener('resize', resizeCV);
               // Initial call
-              setInterval(resizeCV, 1000); // Poll just in case content changes or modal opens
+              setInterval(resizeCV, 1000); 
               
           } catch(e) { console.error("App init failed", e); }
       };
